@@ -1,0 +1,359 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             question1, CODE, READONLY
+    2 00000000                 ENTRY
+    3 00000000         
+    4 00000000 E28F105C        ADR              r1, STRING1 ;Getting the starti
+                                                            ng address of the o
+                                                            riginal text
+    5 00000004 E28F2060        ADR              r2, STRING2 ;Getting the starti
+                                                            ng address of were 
+                                                            to write the edited
+                                                             text
+    6 00000008 E5DF305B        LDRB             r3, EoS     ;Reading the end of
+                                                             string character s
+                                                            o we know when the 
+                                                            end of string is
+    7 0000000C 00000074 
+                       t       EQU              116         ;Assigning the ASCI
+                                                            I value of letter t
+                                                             to the name t read
+                                                            ability
+    8 0000000C 00000068 
+                       h       EQU              104         ;Assigning the ASCI
+                                                            I value of letter h
+                                                             to the name h to i
+                                                            mprove readability
+    9 0000000C 00000065 
+                       e       EQU              101         ;Assigning the ASCI
+                                                            I value of letter e
+                                                             to the name h to i
+                                                            mprove readability
+   10 0000000C 00000020 
+                       spaceChar
+                               EQU              32          ;Assigning the ASCI
+                                                            I value of letter a
+                                                             space character to
+                                                             the name spaceChar
+                                                             to improve readabi
+                                                            lity
+   11 0000000C         
+   12 0000000C E3A0A001 
+                       Loop    MOV              r10, #1     ;Inizalize our coun
+                                                            ter to 1 to make up
+                                                             for adjust locatio
+                                                            n by at least one l
+                                                            ater
+   13 00000010 E4D14001        LDRB             r4, [r1],#1 ;Read in next chara
+                                                            cter in the string 
+                                                            
+   14 00000014         
+   15 00000014 E1540003        CMP              r4, r3      ;If the character i
+                                                            s the end of line, 
+                                                            then we are done
+   16 00000018 0A00000F        BEQ              Done        ;So if it is equal 
+                                                            skip to last line o
+                                                            f program
+   17 0000001C         
+   18 0000001C E3540074        CMP              r4, #t      ;Else check to see 
+                                                            if the letter is a 
+                                                            t
+   19 00000020 04D14001        LDRBEQ           r4, [r1], #1 ;If it is equal to
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                                                             t, read in the nex
+                                                            t character
+   20 00000024 028AA001        ADDEQ            r10, r10, #1 ;And advance the c
+                                                            ounter keep trackin
+                                                            g of lenght of word
+                                                            
+   21 00000028 03540068        CMPEQ            r4, #h      ;Now compare the 2n
+                                                            d letter in the wor
+                                                            d with the letter h
+                                                            
+   22 0000002C 04D14001        LDRBEQ           r4, [r1], #1 ;if the the letter
+                                                             is indeed h. Then 
+                                                            read in the next ch
+                                                            aracter in the word
+                                                            
+   23 00000030 028AA001        ADDEQ            r10, r10, #1 ;And advance the c
+                                                            ounter keeping trac
+                                                            k of the length of 
+                                                            the word by one
+   24 00000034 03540065        CMPEQ            r4, #e      ;Now compare the 3r
+                                                            d letter in the wor
+                                                            d with the letter e
+                                                            
+   25 00000038 05D14000        LDRBEQ           r4, [r1]    ;If the letter is i
+                                                            ndeed e then read i
+                                                            n the next characte
+                                                            r of the word
+   26 0000003C 03540020        CMPEQ            r4, #spaceChar ;Now check if th
+                                                            is is the end of th
+                                                            e word i.e. a space
+                                                             after the letter e
+                                                            
+   27 00000040 0AFFFFF1        BEQ              Loop        ;If it is that mean
+                                                            s the word must be 
+                                                            "the" so we wont wr
+                                                            ite it to the new s
+                                                            tring. So go back t
+                                                            o top of loop
+   28 00000044         
+   29 00000044 135A0003        CMPNE            r10, #3     ;Now check if we ar
+                                                            e running this comm
+                                                            and because the las
+                                                            t the first 3 chara
+                                                            cter are the but th
+                                                            e 4th wasnt a space
+                                                            
+   30 00000048 01540003        CMPEQ            r4, r3      ;If it is it can st
+                                                            ill be the end of t
+                                                            he word if the char
+                                                            acter is end of lin
+                                                            e. 
+   31 0000004C 1041100A        SUBNE            r1, r1, r10 ;Else we get here a
+                                                            nd its not "the" so
+                                                             bring pointer back
+                                                             to the orginal spo
+                                                            t
+   32 00000050 14D14001        LDRBNE           r4, [r1], #1 ;Read in this char
+                                                            acter in that spot
+   33 00000054 14C24001        STRBNE           r4, [r2], #1 ;And then write it
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+                                                             to the new string
+   34 00000058 EAFFFFEB        B                Loop        ;Go back to the top
+                                                             and find the next 
+                                                            word
+   35 0000005C         
+   36 0000005C E5C23000 
+                       Done    STRB             r3, [r2]    ;Writing the null c
+                                                            haracter after the 
+                                                            last character to i
+                                                            ndicate end of stri
+                                                            ng
+   37 00000060 EAFFFFFE 
+                       Terminate
+                               B                Terminate   ;Marking end of the
+                                                             program
+   38 00000064         
+   39 00000064                 AREA             question1, DATA, READWRITE
+   40 00000064 62 72 65 
+              61 74 68 
+              65       STRING1 DCB              "breathe"   ;String1
+   41 0000006B 00      EoS     DCB              0x00        ;end of string1 
+   42 0000006C 00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 STRING2 space            0xFF        ;just allocating 25
+                                                            5 bytes
+   43 0000016B                 END                          ;By: Jakob Wanger, 
+                                                            Student Number: 250
+                                                            950022
+Command Line: --debug --xref --bi --apcs=interwork --depend=.\question1.d -o.\q
+uestion1.o -IC:\Keil\ARM\RV31\INC -IC:\Keil\ARM\CMSIS\Include --predefine="__EV
+AL SETA 1" --list=.\question1.lst question1.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Done 0000005C
+
+Symbol: Done
+   Definitions
+      At line 36 in file question1.s
+   Uses
+      At line 16 in file question1.s
+Comment: Done used once
+EoS 0000006B
+
+Symbol: EoS
+   Definitions
+      At line 41 in file question1.s
+   Uses
+      At line 6 in file question1.s
+Comment: EoS used once
+Loop 0000000C
+
+Symbol: Loop
+   Definitions
+      At line 12 in file question1.s
+   Uses
+      At line 27 in file question1.s
+      At line 34 in file question1.s
+
+STRING1 00000064
+
+Symbol: STRING1
+   Definitions
+      At line 40 in file question1.s
+   Uses
+      At line 4 in file question1.s
+Comment: STRING1 used once
+STRING2 0000006C
+
+Symbol: STRING2
+   Definitions
+      At line 42 in file question1.s
+   Uses
+      At line 5 in file question1.s
+Comment: STRING2 used once
+Terminate 00000060
+
+Symbol: Terminate
+   Definitions
+      At line 37 in file question1.s
+   Uses
+      At line 37 in file question1.s
+Comment: Terminate used once
+question1 00000000
+
+Symbol: question1
+   Definitions
+      At line 1 in file question1.s
+   Uses
+      None
+Comment: question1 unused
+7 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+e 00000065
+
+Symbol: e
+   Definitions
+      At line 9 in file question1.s
+   Uses
+      At line 24 in file question1.s
+Comment: e used once
+h 00000068
+
+Symbol: h
+   Definitions
+      At line 8 in file question1.s
+   Uses
+      At line 21 in file question1.s
+Comment: h used once
+spaceChar 00000020
+
+Symbol: spaceChar
+   Definitions
+      At line 10 in file question1.s
+   Uses
+      At line 26 in file question1.s
+Comment: spaceChar used once
+t 00000074
+
+Symbol: t
+   Definitions
+      At line 7 in file question1.s
+   Uses
+      At line 18 in file question1.s
+Comment: t used once
+4 symbols
+342 symbols in table
